@@ -158,7 +158,15 @@ becomeFollower -> INFO 0c3 3 became follower at term 5 channel=mychannel node=3
 run -> INFO 0c4 raft.node: 3 elected leader 1 at term 5 channel=mychannel node=3
 ```
 
+Lets look at the logs of one of the nodes orderer2.example.com during this time period of joining.
 
+```
+Step -> INFO 05c 2 [logterm: 2, index: 7, vote: 0] ignored MsgPreVote from 3 [logterm: 2, index: 7] at term 2: lease is not expired (remaining ticks: 10) channel=byfn-sys-channel node=2
+Step -> INFO 05d 2 [logterm: 5, index: 13, vote: 0] rejected MsgPreVote from 3 [logterm: 4, index: 12] at term 5 channel=mychannel node=2
+
+```
+
+We can see that the pre-vote request from Node3 was rejected.
 
 ## Metrics
 
