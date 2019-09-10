@@ -1,6 +1,6 @@
 # Raft leader election process in Hyperledger Fabric.
 
-In this article we try to understand the how to election process in raft works by deploying Fabric samples first network using with raft ordering service. 
+In this article we will explore how the leader election process in raft works by deploying Fabric samples first network using with raft ordering service. 
 
 ```bash
 cd first-network
