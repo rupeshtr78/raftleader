@@ -33,11 +33,11 @@ For this exercise we will create a simple grafana dashboard to see the cluster s
 
     - **Follower** : Passive: they issue no requests on their own but simply respond to requests from leaders and candidates. If a follower receives no communication from leader ,it becomes a pre-candidate and initiates an election.
 
-      Lets see if we can find out the the process of leader election from the logs.
+      Lets see if we can find out the the process of leader election from the fabric orderer logs.
 
 ## Raft Leader Election
 
-In a raft cluster election this is what happens 
+In a raft cluster election at a  high level these are the sequence of steps.
 
 **Election**
 
@@ -53,9 +53,9 @@ In a raft cluster election this is what happens
 
    
 
-Based on above steps lets see how the orderer3 became the leader for mychannel from the logs.
+Based on above steps lets see how the orderer3 became the leader for mychannel from the its logs.
 
-docker logs orderer3.example.com
+Below is the extract of *docker logs orderer3.example.com*
 
 ```bash
 #Step0 Node3 starts election becomes Pre-Candidate
@@ -116,12 +116,12 @@ propose -> INFO 062 Created block [1], there are 0 blocks in flight channel=mych
 Lets simulate a node failure by stopping the Node3 which is the leader for mychannel.
 
 - docker stop orderer3.example.com.
-- We can see the number of nodes active is now 4.
-- And the **new leader** has been elected **Node1** which is orderer.example.com.
+- Grafana dashboard we can see the number of nodes active is now 4.
+- And the **new leader** has been elected  for mychannel **Node1** which is orderer.example.com.
 
 ![](images/newleader.png)
 
-Lets inspect the docker logs orderer.example.com.
+Lets inspect the docker logs orderer.example.com in detail.
 
 ```bash
 run -> INFO 095 raft.node: 1 lost leader 3 at term 4 channel=mychannel node=1
@@ -158,7 +158,7 @@ becomeFollower -> INFO 0c3 3 became follower at term 5 channel=mychannel node=3
 run -> INFO 0c4 raft.node: 3 elected leader 1 at term 5 channel=mychannel node=3
 ```
 
-Lets look at the logs of one of the nodes orderer2.example.com during this time period of joining.
+Lets look at the logs of one of the other nodes orderer2.example.com during the same time period.
 
 ```
 Step -> INFO 05c 2 [logterm: 2, index: 7, vote: 0] ignored MsgPreVote from 3 [logterm: 2, index: 7] at term 2: lease is not expired (remaining ticks: 10) channel=byfn-sys-channel node=2
@@ -168,9 +168,11 @@ Step -> INFO 05d 2 [logterm: 5, index: 13, vote: 0] rejected MsgPreVote from 3 [
 
 We can see that the pre-vote request from Node3 was rejected.
 
-## Metrics
 
-We will configure Prometheus and Grafana to explore cluster and consensus  related metrics. Refer this [link](https://hyperledger-fabric.readthedocs.io/en/latest/metrics_reference.html) for all available metrics.
+
+#### Metrics
+
+For this exercise we configured Prometheus and Grafana to explore cluster and consensus  related metrics. Refer this [link](https://hyperledger-fabric.readthedocs.io/en/latest/metrics_reference.html) for all available metrics.
 
 Before starting network add the below lines under orderer-base environment variables.
 
@@ -195,7 +197,7 @@ Add Prometheus as data source to grafana . http://serverIP:3000/datasources
 
 ![](images/datasource.png)
 
-We will create a simple grafana dashboard. 
+We will create a simple grafana dashboard for this exercise.
 
 ```bash
 consensus_etcdraft_is_leader>0
